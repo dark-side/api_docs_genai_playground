@@ -4,11 +4,15 @@ import { StyledCard, StyledPre, PageContainer } from "../styles/DBSchemaDocStyle
 import { dbSchema } from "../data/dbSchemaData";
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { Link } from "react-router-dom";
 
 export default function DbSchemaDocumentation() {
   return (
     <PageContainer>
       <div className="flex flex-col w-full p-6 max-w-5xl mx-auto text-white">
+        <nav className="mb-4">
+          <Link to="/" className="text-blue-500 hover:underline">Home</Link> &gt; Database Schema Documentation
+        </nav>
         <h1 className="text-3xl font-bold mb-4">Database Schema Documentation</h1>
         <StyledCard>
           <CardContent>
