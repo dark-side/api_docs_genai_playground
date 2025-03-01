@@ -4,7 +4,7 @@ FROM node:latest
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and yarn.lock to the working directory
 COPY package.json yarn.lock ./
 
 # Install dependencies
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5173
 
 # Command to run the application
-CMD ["yarn", "dev"]
+CMD ["yarn", "dev", "--host", "0.0.0.0"]
