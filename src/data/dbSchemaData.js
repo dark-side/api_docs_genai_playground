@@ -1,38 +1,20 @@
-import diagram from '../assets/diagram.png';
+import diagram from '../assets/schema.png';
 
 export const dbSchema = {
     diagram: diagram,
     pseudoCode: `
-class User {
-    id: int
-    email: string, not null, default ""
-    encrypted_password: string, not null, default ""
-    reset_password_token: string
-    reset_password_sent_at: datetime
-    remember_created_at: datetime
-    created_at: datetime, not null
-    updated_at: datetime, not null
-    posts: [Post]
-}
-
-class Post {
-    id: int
-    title: string
-    content: text
-    user: User
-}
-
-class ActiveStorageAttachment {
-    id: int
+Class ActiveStorageAttachment {
     name: string, not null
     record_type: string, not null
     record_id: bigint, not null
     blob_id: bigint, not null
     created_at: datetime, not null
+    Indexes:
+        blob_id
+        (record_type, record_id, name, blob_id) unique
 }
 
-class ActiveStorageBlob {
-    id: int
+Class ActiveStorageBlob {
     key: string, not null
     filename: string, not null
     content_type: string
@@ -41,16 +23,18 @@ class ActiveStorageBlob {
     byte_size: bigint, not null
     checksum: string
     created_at: datetime, not null
+    Indexes:
+        key unique
 }
 
-class ActiveStorageVariantRecord {
-    id: int
+Class ActiveStorageVariantRecord {
     blob_id: bigint, not null
     variation_digest: string, not null
+    Indexes:
+        (blob_id, variation_digest) unique
 }
 
-class Article {
-    id: int
+Class Article {
     title: string
     short_description: string
     description: text
@@ -58,105 +42,139 @@ class Article {
     updated_at: datetime, not null
 }
 
-class Comment {
-    id: int
+Class Comment {
     content: text
     created_at: datetime, not null
     updated_at: datetime, not null
     article_id: bigint, not null
+    Indexes:
+        article_id
 }
 
-class Like {
-    id: int
+Class JwtDenylist {
+    jti: string
+    exp: datetime
+    created_at: datetime, not null
+    updated_at: datetime, not null
+    Indexes:
+        jti
+}
+
+Class Like {
     likes: integer
     dislikes: integer
     likeable_type: string, not null
     likeable_id: bigint, not null
     created_at: datetime, not null
     updated_at: datetime, not null
+    Indexes:
+        (likeable_type, likeable_id)
 }
+
+Class User {
+    email: string, not null, default ""
+    encrypted_password: string, not null, default ""
+    reset_password_token: string
+    reset_password_sent_at: datetime
+    remember_created_at: datetime
+    created_at: datetime, not null
+    updated_at: datetime, not null
+    Indexes:
+        email unique
+        reset_password_token unique
+}
+
+Relationships:
+    ActiveStorageAttachment -> ActiveStorageBlob : blob_id
+    ActiveStorageVariantRecord -> ActiveStorageBlob : blob_id
+    Comment -> Article : article_id
     `,
     plantUmlCode: `
 @startuml
-
-class User {
-    id: int
-    email: string, not null, default ""
-    encrypted_password: string, not null, default ""
-    reset_password_token: string
-    reset_password_sent_at: datetime
-    remember_created_at: datetime
-    created_at: datetime, not null
-    updated_at: datetime, not null
+entity active_storage_attachments {
+  *name : string
+  *record_type : string
+  *record_id : bigint
+  *blob_id : bigint
+  *created_at : datetime
+  --
+  index blob_id
+  index record_type, record_id, name, blob_id (unique)
 }
 
-class Post {
-    id: int
-    title: string
-    content: text
-    user_id: int
+entity active_storage_blobs {
+  *key : string
+  *filename : string
+  content_type : string
+  metadata : text
+  *service_name : string
+  *byte_size : bigint
+  checksum : string
+  *created_at : datetime
+  --
+  index key (unique)
 }
 
-class ActiveStorageAttachment {
-    id: int
-    name: string, not null
-    record_type: string, not null
-    record_id: bigint, not null
-    blob_id: bigint, not null
-    created_at: datetime, not null
+entity active_storage_variant_records {
+  *blob_id : bigint
+  *variation_digest : string
+  --
+  index blob_id, variation_digest (unique)
 }
 
-class ActiveStorageBlob {
-    id: int
-    key: string, not null
-    filename: string, not null
-    content_type: string
-    metadata: text
-    service_name: string, not null
-    byte_size: bigint, not null
-    checksum: string
-    created_at: datetime, not null
+entity articles {
+  title : string
+  short_description : string
+  description : text
+  *created_at : datetime
+  *updated_at : datetime
 }
 
-class ActiveStorageVariantRecord {
-    id: int
-    blob_id: bigint, not null
-    variation_digest: string, not null
+entity comments {
+  content : text
+  *created_at : datetime
+  *updated_at : datetime
+  *article_id : bigint
+  --
+  index article_id
 }
 
-class Article {
-    id: int
-    title: string
-    short_description: string
-    description: text
-    created_at: datetime, not null
-    updated_at: datetime, not null
+entity jwt_denylists {
+  jti : string
+  exp : datetime
+  *created_at : datetime
+  *updated_at : datetime
+  --
+  index jti
 }
 
-class Comment {
-    id: int
-    content: text
-    created_at: datetime, not null
-    updated_at: datetime, not null
-    article_id: bigint, not null
+entity likes {
+  likes : integer
+  dislikes : integer
+  *likeable_type : string
+  *likeable_id : bigint
+  *created_at : datetime
+  *updated_at : datetime
+  --
+  index likeable_type, likeable_id
 }
 
-class Like {
-    id: int
-    likes: integer
-    dislikes: integer
-    likeable_type: string, not null
-    likeable_id: bigint, not null
-    created_at: datetime, not null
-    updated_at: datetime, not null
+entity users {
+  *email : string
+  *encrypted_password : string
+  reset_password_token : string
+  reset_password_sent_at : datetime
+  remember_created_at : datetime
+  *created_at : datetime
+  *updated_at : datetime
+  --
+  index email (unique)
+  index reset_password_token (unique)
 }
 
-User "1" -- "0..*" Post: posts
-Post "1" -- "0..*" Comment: comments
-Article "1" -- "0..*" Comment: comments
-ActiveStorageBlob "1" -- "0..*" ActiveStorageAttachment: attachments
-ActiveStorageBlob "1" -- "0..*" ActiveStorageVariantRecord: variant_records
-
+active_storage_attachments }|--|| active_storage_blobs : blob_id
+active_storage_variant_records }|--|| active_storage_blobs : blob_id
+comments }|--|| articles : article_id
 @enduml
     `
 };
