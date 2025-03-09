@@ -44,7 +44,7 @@ export default function ApiBestPractices() {
             <li>Endpoints must be written using `-` (e.g., `/user-profile`).</li>
             <li>The API must return responses in JSON format.</li>
             <li>CORS policy must allow requests from `localhost`, `127.0.0.1`, and `0.0.0.0` by default.</li>
-            <li>Open ports by default: `3000`, `3001`, `3002`.</li>
+            <li>Open ports by default: `3000`, `3001`, `3002`, `4200`.</li>
             <li>Parameter names in JSON responses must use `_` (e.g., `short_description`).</li>
             <li>`/articles` endpoint must include all fields as per documentation. Additional fields may be added, but existing fields must not be altered.</li>
             <li>HTTP methods must be properly utilized (GET, POST, PUT, DELETE).</li>
@@ -78,6 +78,7 @@ export default function ApiBestPractices() {
             <li>3000</li>
             <li>3001</li>
             <li>3002</li>
+            <li>4200</li>
           </ul>
           <p className="text-gray-400 mt-2">
             These ports can be modified as needed for different environments.
