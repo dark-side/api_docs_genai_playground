@@ -14,7 +14,6 @@ export const apiEndpoints = [
     responseExample: `{
       id: 2,
       email: "newuser@example.com",
-      authentication_token: "ghijkl789012"
     }`
   },
   {
