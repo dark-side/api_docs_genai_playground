@@ -4,7 +4,7 @@ export const apiEndpoints = [
   {
     name: "User Registration",
     method: "POST",
-    path: "/users",
+    path: "/users/registrations",
     description: "Registers a new user.",
     requestExamples: {
       shell: "curl -X POST -H 'Content-Type: application/json' -d '{\"user\": {\"email\": \"newuser@example.com\", \"password\": \"password\", \"password_confirmation\": \"password\"}}' users/registrations",
